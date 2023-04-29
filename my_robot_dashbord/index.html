@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <title> My UI</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Boxiocns CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.js"></script>
+    <script type="text/javascript" src="roslib/roslibjs-develop/build/roslib.js"></script>
+    <script type="text/javascript" src="roslib/roslibjs-develop/build/roslib.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   </head>
+<body>
+  <div class="sidebar close">
+    <div class="logo-details">
+      <i class='bx bx-wrench'></i>
+      <span class="logo_name">LmS</span>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a href="#">
+            <i class="uil uil-apps"></i>
+          <span class="link_name">Dashboard</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a class="link_name" href="#">Status</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="#">
+          <i class='bx bx-history'></i>
+          <span class="link_name">Status</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a class="link_name" href="status.html" id="status-link">Status</a></li>
+        </ul>
+      </li>
+      <li>
+        <div class="iocn-link">
+          <a href="#">
+            <i class="uil uil-toggle-off"></i>
+            <span class="link_name">Offline</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow' ></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="#">Offline</a></li>
+          <li>
+           
+            <a href="#"> <i class="uil uil-keyboard-alt"></i>Control</a></li>
+         
+        </ul>
+      </li>
+      <li>
+        <div class="iocn-link">
+          <a href="#">
+            <i class="uil uil-toggle-on"></i>
+            <span class="link_name">Online</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow' ></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="#">Online</a></li>
+          <li>
+            
+            <a href="#"><i class="uil uil-keyboard-alt"></i>Control</a></li>
+         
+        </ul>
+      </li>
+    
+      <li>
+        <div class="iocn-link">
+          <a href="#">
+            <i class='bx bx-plug' ></i>
+            <span class="link_name">Jog</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow' ></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="#">Jog</a></li>
+          <li>
+            
+            <a href="control.html" id="control-link"><i class="uil uil-keyboard-alt"></i>Control</a></li>
+         
+        </ul>
+      </li>
+     
+      <li>
+      <div class="profile-details">
+      <div class="profile-content">
+        <img src="images/logo.png" alt="profileImg">
+      </div>
+      <div class="name-job">
+        <div class="profile_name">lorem ipsum</div>
+        <div class="job">lorem ipsum</div>
+      </div>
+      <i class='bx bx-log-out' ></i>
+      </div>
+     </li>
+</ul>
+  </div>
+  <section class="home-section">
+    <div class="home-content">
+      <i class='bx bx-menu' ></i>
+    </div>
+
+   
+   <section class="dashboard">
+    <div class="dash-content" id="middle-div">
+      
+      <iframe id="html-frame" src="control.html" style="display: none;"></iframe>
+        
+
+    </div>
+
+   </section>
+
+  </section>
+
+
+
+
+
+
+  <script src="index.js"></script>
+  <script>
+
+
+  let arrow = document.querySelectorAll(".arrow");
+  for (var i = 0; i < arrow.length; i++) {
+    arrow[i].addEventListener("click", (e)=>{
+   let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
+   arrowParent.classList.toggle("showMenu");
+    });
+  }
+  let sidebar = document.querySelector(".sidebar");
+  let sidebarBtn = document.querySelector(".bx-menu");
+  console.log(sidebarBtn);
+  sidebarBtn.addEventListener("click", ()=>{
+    sidebar.classList.toggle("close");
+  });
+
+
+  $(document).ready(function() {
+  $('#control-link').click(function(event) {
+    event.preventDefault(); // prevent the default link behavior
+    
+    // load the contents of control.html into the middle-div section
+    $('#middle-div').load('control.html');
+  });
+});
+
+
+$(document).ready(function() {
+  $('#status-link').click(function(event) {
+    event.preventDefault(); // prevent the default link behavior
+    
+    // load the contents of control.html into the middle-div section
+    $('#middle-div').load('status.html');
+  });
+});
+
+
+  </script>
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+

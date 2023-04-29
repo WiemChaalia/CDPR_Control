@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robot Status</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.js"></script>
+  <script type="text/javascript" src="roslib/roslib.js"></script>
+  <script type="text/javascript" src="roslib/roslibjs-develop/build/roslib.js"></script>
+  <script type="text/javascript" src="roslib/roslibjs-develop/build/roslib.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .status {
+      display: inline-block;
+      padding: 10px 20px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      background-color: #007bff;
+      border-radius: 5px;
+    }
+    
+    .status.error {
+      background-color: #dc3545;
+    }
+    
+    .status.closed {
+      background-color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <p>Connection status: <span class="status" id="status">Connecting...</span></p>
+  </div>
+
+  <script type="text/javascript">
+    var ros = new ROSLIB.Ros({
+      url: 'ws://localhost:9090'
+    });
+
+    ros.on('connection', function () {
+      document.getElementById("status").innerHTML = "Connected";
+      document.getElementById("status").classList.remove('error', 'closed');
+    });
+
+    ros.on('error', function (error) {
+      document.getElementById("status").innerHTML = "Error";
+      document.getElementById("status").classList.remove('closed');
+      document.getElementById("status").classList.add('error');
+    });
+
+    ros.on('close', function () {
+      document.getElementById("status").innerHTML = "Closed";
+      document.getElementById("status").classList.remove('error');
+      document.getElementById("status").classList.add('closed');
+    });
+
+    var txt_listener = new ROSLIB.Topic({
+      ros: ros,
+      name: '/txt_msg',
+      messageType: 'std_msgs/String'
+    });
+
+    txt_listener.subscribe(function (m) {
+      document.getElementById("status").innerHTML = m.data;
+      move(1, 0);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Control</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="roslib/roslibjs-develop/build/roslib.js"></script>
+    <script type="text/javascript" src="roslib/roslibjs-develop/build/roslib.min.js"></script>
+
+    
+
+
+<style>
+
+.pulley-btn {
+  border: 1px solid #ccc;
+  color: #555;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px 20px;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.pulley-btn:hover {
+  background-color: #eee;
+}
+
+.pulley-btn-inc {
+  border-radius: 5px 0 0 5px;
+  margin-right: 5px;
+}
+
+.pulley-btn-dec {
+  border-radius: 0 5px 5px 0;
+  margin-left: 5px;
+}
+
+.pulley + .pulley {
+  margin-top: 10px; 
+}
+
+</style>
+</head>
+<body>
+   
+    <div class="pulley">
+        <span class="pulleyName">Pulley1_Joint</span>
+        <button class="pulley-btn pulley-btn-inc" id="pulley1-plus" data-joint-index="0" >+</button>
+        <button class="pulley-btn pulley-btn-dec" id="pulley1-minus" data-joint-index="0">-</button>
+      </div>
+      
+      <div class="pulley">
+        <span class="pulleyName">Pulley2_Joint</span>
+        <button class="pulley-btn pulley-btn-inc" id="pulley2-plus" data-joint-index="1" >+</button>
+        <button class="pulley-btn pulley-btn-dec" id="pulley2-minus" data-joint-index="1" >-</button>
+      </div>
+      
+      <div class="pulley">
+        <span class="pulleyName">Pulley3_Joint</span>
+        <button class="pulley-btn pulley-btn-inc" id="pulley3-plus" data-joint-index="2" >+</button>
+        <button class="pulley-btn pulley-btn-dec" id="pulley3-minus" data-joint-index="2" >-</button>
+      </div>
+      
+      <div class="pulley">
+        <span class="pulleyName">Pulley4_Joint</span>
+        <button class="pulley-btn pulley-btn-inc" id="pulley4-plus" data-joint-index="3" >+</button>
+        <button class="pulley-btn pulley-btn-dec" id="pulley4-minus" data-joint-index="3">-</button>
+    </div>
+
+    <script type="text/javascript">
+      // create a ROS node using roslibjs
+      var ros = new ROSLIB.Ros({
+      url: 'ws://localhost:9090'
+    });
+    
+    ros.on('connection', function() {
+      console.log('Connected to ROS environment.');
+    });
+    
+    ros.on('error', function(error) {
+      console.log('Error connecting to ROS environment:', error);
+    });
+    
+    ros.on('close', function() {
+      console.log('Connection to ROS environment closed.');
+    });
+    
+    
+    // create a ROS topic to publish pulley joint values
+    var pulleyTopic = new ROSLIB.Topic({
+      ros: ros,
+      name: '/joint_states',
+      messageType: 'sensor_msgs/JointState'
+    });
+
+    var jointStatePublisher = new ROSLIB.Topic({
+    ros : ros,
+    name : '/joint_states',
+    messageType : 'sensor_msgs/JointState'
+    });
+
+    
+    // create a function to publish joint values to ROS when a button is clicked
+   // set the interval time in milliseconds (e.g., 100 ms = 10 Hz)
+   var intervalTime = 100;
+
+  // define a variable to hold the current joint values
+   var jointValues = [0, 0, 0, 0];
+
+  // define a variable to hold the interval ID returned by setInterval()
+  var intervalId = null;
+
+  // handle button click events using jQuery
+  $('#pulley1-plus, #pulley1-minus, #pulley2-plus, #pulley2-minus, #pulley3-plus, #pulley3-minus, #pulley4-plus, #pulley4-minus').mousedown(function() {
+  // get the button ID and direction from the clicked button
+  var buttonId = $(this).attr('id');
+  var direction = buttonId.endsWith('-plus') ? 1 : -1;
+  
+  // get the joint index from the clicked button ID
+  var jointIndex = $(this).data('joint-index');
+  
+  // set the joint value increment based on the clicked button
+  var jointValueIncrement = 0.1 * direction;
+  
+  // update the current joint value for the clicked joint
+  jointValues[jointIndex] += jointValueIncrement;
+  
+  // publish the updated joint values
+  publishJointValues(jointValues);
+  
+  // clear any existing interval
+  clearInterval(intervalId);
+  
+  // start a new interval to continuously publish joint values
+  intervalId = setInterval(function() {
+    publishJointValues(jointValues);
+  }, intervalTime);
+});
+
+// handle button release events using jQuery
+$('#pulley1-plus, #pulley1-minus, #pulley2-plus, #pulley2-minus, #pulley3-plus, #pulley3-minus, #pulley4-plus, #pulley4-minus').mouseup(function() {
+  // clear the interval when the button is released
+  clearInterval(intervalId);
+});
+
+// function to publish joint values
+function publishJointValues(jointValues) {
+  var message = new ROSLIB.Message({
+    header: {
+      stamp: '',
+      frame_id: 'base_link',
+      seq: 0
+    },
+    name: ['Pulley1_Joint', 'Pulley2_Joint', 'Pulley3_Joint', 'Pulley4_Joint'],
+    position: jointValues,
+    velocity: [],
+    effort: []
+  });
+  
+  jointStatePublisher.publish(message);
+  
+}
+
+    
+</script>
+
+    
+</body>
+</html>

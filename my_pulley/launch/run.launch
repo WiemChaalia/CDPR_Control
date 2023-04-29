@@ -1,0 +1,30 @@
+<launch>
+    <arg
+      name="model" />
+    <param
+      name="robot_description"
+      textfile="$(find cablerobot_test_urdf)/urdf/cablerobot_test_urdf.urdf" />
+    <node
+      name="joint_state_publisher_gui"
+      pkg="joint_state_publisher_gui"
+      type="joint_state_publisher_gui" />
+    <node
+      name="robot_state_publisher"
+      pkg="robot_state_publisher"
+      type="robot_state_publisher" />
+      <node
+      name="teleop_pulley"
+      pkg="my_pulley"
+      type="my_pulley_controller.py">
+      
+
+      </node>
+    
+    <node
+      name="rviz"
+      pkg="rviz"
+      type="rviz"
+      args="-d $(find cablerobot_test_urdf)/urdf.rviz" />
+  </launch>
+  
+  
